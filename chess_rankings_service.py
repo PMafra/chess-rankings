@@ -83,10 +83,10 @@ class ChessRankingsService:
                 try:
                     player_ratings = future.result()
                     row = [username] + player_ratings
-                    data_rows.append(row)
                 except ChessRankingsServiceError as e:
                     print(f"An error occurred while processing user {username}: {e}")
                     row = [username] + [None] * 30
+
                 data_rows.append(row)
 
         username_order = {username: index for index, username in enumerate(usernames)}
