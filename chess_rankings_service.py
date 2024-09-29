@@ -54,19 +54,19 @@ class ChessRankingsService:
         """
         username = self._get_top_players_usernames(1)[0]
         ratings = self._get_last_30_days_classical_ratings_for_player(username)
-        date_labels = [(datetime.now().date() - timedelta(days=i)).strftime('%b %d') for i in range(29, -1, -1)]
+        date_labels = [(datetime.now().date() - timedelta(days=i)).strftime('%b %d') for i in range(30, -1, -1)]
         output_ratings = dict(zip(date_labels, ratings))
         print(f"{username}, {output_ratings}")
 
     def generate_rating_csv_for_top_50_classical_players(self, filename: str = 'top_50_classical_players_ratings.csv') -> None:
         """
         Create a CSV that shows the rating history for each of the top 50 classical players for the last 30 days.
-        The CSV will have 51 rows (1 header + 50 players) and 31 columns (username + 30 days of ratings).
+        The CSV will have 51 rows (1 header + 50 players) and 32 columns (username + 30 last days of ratings + today's rating).
         """
         usernames = self._get_top_players_usernames(50)
 
         today = datetime.now().date()
-        date_range = [today - timedelta(days=i) for i in range(29, -1, -1)]
+        date_range = [today - timedelta(days=i) for i in range(30, -1, -1)]
         header = ['username'] + [date.strftime('%Y-%m-%d') for date in date_range]
 
         data_rows = []
@@ -85,7 +85,7 @@ class ChessRankingsService:
                     row = [username] + player_ratings
                 except ChessRankingsServiceError as e:
                     print(f"An error occurred while processing user {username}: {e}")
-                    row = [username] + [None] * 30
+                    row = [username] + [None] * 31
 
                 data_rows.append(row)
 
@@ -168,7 +168,7 @@ class ChessRankingsService:
         Returns a list of ratings corresponding to each day.
         """
         today = datetime.now().date()
-        last_30_days = [today - timedelta(days=i) for i in range(29, -1, -1)]
+        last_30_days = [today - timedelta(days=i) for i in range(30, -1, -1)]
 
         start_date = last_30_days[0]
         last_known_rating = rating_dict.get(start_date)
